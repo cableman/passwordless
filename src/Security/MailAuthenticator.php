@@ -82,7 +82,6 @@ class MailAuthenticator extends AbstractGuardAuthenticator
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        // TODO: Implement start() method.// TODO: Implement start() method.
         return new Response('Authentication required', 404);
     }
 }
