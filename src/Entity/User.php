@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -34,14 +34,14 @@ class User implements UserInterface, \Serializable
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, options={"default" = null}, nullable=true)
      */
-    private $auth_token;
+    private $auth_token = null;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer", options={"default" = 0})
      */
-    private $auth_token_expires;
+    private $auth_token_expires = 0;
 
     public function getId(): ?int
     {
@@ -89,7 +89,7 @@ class User implements UserInterface, \Serializable
         return $this->auth_token;
     }
 
-    public function setAuthToken(string $auth_token): self
+    public function setAuthToken(?string $auth_token): self
     {
         $this->auth_token = $auth_token;
 
@@ -128,23 +128,5 @@ class User implements UserInterface, \Serializable
     public function eraseCredentials()
     {
 
-    }
-
-    public function serialize()
-    {
-        return serialize([
-            $this->id,
-            $this->name,
-            $this->email,
-            $this->token
-        ]);
-    }
-
-    public function unserialize($serialized)
-    {
-        list($this->id,
-            $this->name,
-            $this->email,
-            $this->token) = unserialize($serialized);
     }
 }

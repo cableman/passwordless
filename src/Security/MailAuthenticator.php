@@ -2,6 +2,9 @@
 
 namespace App\Security;
 
+use App\Repository\UserRepository;
+use Carbon\Carbon;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -12,46 +15,74 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class MailAuthenticator extends AbstractGuardAuthenticator
 {
-    public function __construct() {
+    private $entityManager;
+    private $userRepository;
+
+    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager)
+    {
+        $this->userRepository = $userRepository;
+        $this->entityManager = $entityManager;
     }
 
     public function supports(Request $request)
     {
-        // TODO: Implement supports() method.
+        return $request->query->has('token');
     }
 
     public function getCredentials(Request $request)
     {
-        // TODO: Implement getCredentials() method.
+        return $request->query->get('token');
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        // TODO: Implement getUser() method.
+        if (null === $credentials) {
+            return null;
+        }
+
+        // Check if user exists with token.
+        $user = $this->userRepository->findOneBy(['auth_token' => $credentials]);
+        if (null === $user) {
+            return null;
+        }
+
+        // Check if token is expired.
+        if ($user->getAuthTokenExpires() <= Carbon::now()->getTimestamp()) {
+            return null;
+        }
+
+        // Remove token to enabled on-time-login.
+        $user->setAuthTokenExpires(0);
+        $user->setAuthToken(null);
+        $this->entityManager->flush();
+
+        return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        // TODO: Implement checkCredentials() method.
+        return true;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        // TODO: Implement onAuthenticationFailure() method.
+        return new Response('Authentication failed', 404);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
-        // TODO: Implement onAuthenticationSuccess() method.
+        // on success, let the request continue
+        return null;
     }
 
     public function supportsRememberMe()
     {
-        // TODO: Implement supportsRememberMe() method.
+        return false;
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        // TODO: Implement start() method.
+        // TODO: Implement start() method.// TODO: Implement start() method.
+        return new Response('Authentication required', 404);
     }
 }

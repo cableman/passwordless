@@ -84,6 +84,9 @@
     "monolog/monolog": {
         "version": "2.1.0"
     },
+    "nesbot/carbon": {
+        "version": "2.34.2"
+    },
     "nikic/php-parser": {
         "version": "v4.4.0"
     },

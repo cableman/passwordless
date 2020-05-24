@@ -18,3 +18,4 @@ security:
 
     access_control:
         - { path: ^/personal, roles: ROLE_USER }
+        - { path: ^/redirect, roles: ROLE_USER }
