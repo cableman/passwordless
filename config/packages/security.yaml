@@ -8,6 +8,9 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            guard:
+                authenticators:
+                    - App\Security\MailAuthenticator
             anonymous: true
             pattern: ^/
             logout:

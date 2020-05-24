@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <form action="{{ path('login') }}" method="post">
+        <input type="text" id="mail" name="_mail" size="40" placeholder="ENTER YOUR E-MAIL ADDRESS" />
+        <button type="submit">Login</button>
+    </form>
+    <div class="links">
+        <a href="{{ path('home') }}">Back to Home</a>
+    </div>
+{% endblock %}
